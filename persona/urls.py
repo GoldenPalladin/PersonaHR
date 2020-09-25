@@ -15,7 +15,35 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
+from django.conf.urls import url, include
+
+from rest_framework import permissions
+
+from drf_yasg.views import get_schema_view
+from drf_yasg import openapi
+from allauth.account.views import confirm_email
+
+
+schema_view = get_schema_view(
+   openapi.Info(
+      title="Persona API",
+      default_version='v1',
+      description="API documentation for Persona project backend server",
+      terms_of_service="https://megauniver.com/api/terms/",
+      contact=openapi.Contact(email="info@megauniver.com"),
+      license=openapi.License(name="MIT License"),
+   ),
+   public=False,
+   permission_classes=(permissions.AllowAny,),
+)
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
+    url(r'^', include('django.contrib.auth.urls')),
+    url(r'^rest-auth/', include('rest_auth.urls')),
+    url(r'^accounts/', include('allauth.urls')),
+    url(r'^rest-auth/registration/account-confirm-email/(?P<key>.+)/$', confirm_email, name='account_confirm_email'),
+	url(r'^rest-auth/registration/', include('rest_auth.registration.urls')),
+    url(r'^swagger(?P<format>\.json|\.yaml)$', schema_view.without_ui(cache_timeout=0), name='schema-json'),
+    url(r'^api-docs/$', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
+    #url(r'^redoc/$', schema_view.with_ui('redoc', cache_timeout=0), name='schema-redoc'),
 ]
