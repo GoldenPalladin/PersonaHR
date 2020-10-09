@@ -31,20 +31,23 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
-	'django.contrib.sites',
+    'django.contrib.sites',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'allauth',
+    'allauth.account',
+    'answers',
     'rest_framework',
     'rest_framework.authtoken',
     'rest_auth',
-	'rest_auth.registration',
-	'allauth',
-	'allauth.account',
-    'drf_yasg',
+    'rest_auth.registration',
+    'taggit'
+
+    # 'drf_yasg',
 ]
 
 MIDDLEWARE = [
