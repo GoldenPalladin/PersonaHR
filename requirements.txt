@@ -4,3 +4,4 @@ django-rest-swagger==2.2.0
 django-taggit
 django-rest-auth
 django-allauth
+-e git+https://github.com/Frankkkkk/drf-nested-routers.git@a3bb6be19d8444431df7e9c0785d56f36c99c8ab#egg=drf-nested-routers

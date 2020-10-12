@@ -9,6 +9,10 @@ QUESTION_TYPE = 'Type of question group'
 EM_TEXT_NAME = 'Text for employer'
 CA_TEXT_NAME = 'Text for candidate'
 ORDER_NO = 'Option position'
+T_USER_ID = 'Telegram user ID'
+T_USER_F_NAME = 'Telegram user first name'
+T_USER_L_NAME = 'Telegram user last name'
+T_USER_U_NAME = 'Telegram user nickname'
 
 
 class Specialization(models.Model):
@@ -68,11 +72,24 @@ class Answers(models.Model):
     USER_TYPE_CHOICE = [(CANDIDATE, 'Candidate'),
                         (EMPLOYER, 'Employer')]
     user = models.ForeignKey(User, on_delete=models.CASCADE,
-                             related_name='+')
+                             related_name='+', null=True, blank=True)
     user_type = models.CharField(max_length=2,
                                  choices=USER_TYPE_CHOICE,
                                  default=CANDIDATE)
-    answer_data = models.JSONField()
+    answer_data = models.JSONField(name='answers')
+    # Telegram bot user data
+    b_user = models.CharField(max_length=20,
+                              name='userID',
+                              verbose_name=T_USER_ID, blank=True)
+    b_user_f_name = models.CharField(max_length=20, blank=True,
+                                     name='userFirstName',
+                                     verbose_name=T_USER_F_NAME)
+    b_user_l_name = models.CharField(max_length=20, blank=True,
+                                     name='userLastName',
+                                     verbose_name=T_USER_L_NAME)
+    b_user_u_name = models.CharField(max_length=20, blank=True,
+                                     name='userUserName',
+                                     verbose_name=T_USER_U_NAME)
     specialization = models.ForeignKey(Specialization,
                                        on_delete=models.CASCADE,
                                        related_name='+')

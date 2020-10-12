@@ -19,8 +19,12 @@ class QuestionsViewSet(viewsets.ModelViewSet):
 
 
 class QuestionOptionsViewSet(viewsets.ModelViewSet):
-    queryset = QuestionOptions.objects.all()
+    # queryset = QuestionOptions.objects.all()
     serializer_class = QuestionOptionSerializer
+
+    def get_queryset(self):
+        return QuestionOptions.objects.filter(question=self.kwargs[
+            'question_pk'])
 
 
 class SpecializationViewSet(viewsets.ModelViewSet):
