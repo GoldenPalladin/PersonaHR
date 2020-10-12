@@ -1,6 +1,5 @@
 #!/usr/bin/env bash
 cd /home/ubuntu/www/backend/
+cp db.sqlite3 /tmp
 source /home/ubuntu/www/backend/venv/bin/activate
-# supervisorctl -c /home/ubuntu/www/backend/supervisor/default.conf stop all 2&>1 >/dev/null
-# sudo unlink /tmp/supervisor.sock 2> /dev/null
-sudo pkill supervisor*
+sudo service apache2 stop
