@@ -27,18 +27,5 @@ class SpecializationViewSet(viewsets.ModelViewSet):
     queryset = Specialization.objects.all()
     serializer_class = SpecializationSerializer
 
-# class AnswersView(ListCreateAPIView):
-#     queryset = Answers.objects.all()
-#     serializer_class = AnswerSerializer
-#
-#     def perform_create(self, serializer):
-#         user = get_object_or_404(User, id=self.request.data.get(
-#             'user_id'))
-#         return serializer.save(author=user)
-#
-#
-# class SingleAnswerView(RetrieveUpdateDestroyAPIView):
-#     queryset = Answers.objects.all()
-#     serializer_class = AnswerSerializer
 
 

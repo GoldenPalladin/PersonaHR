@@ -26,5 +26,5 @@ class QuestionOptionSerializer(serializers.ModelSerializer):
 
 class SpecializationSerializer(serializers.ModelSerializer):
     class Meta:
-        model = QuestionOptions
+        model = Specialization
         fields = ('name',)
