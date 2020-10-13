@@ -11,8 +11,15 @@ class AnswerSerializer(serializers.ModelSerializer):
                   'userUserName')
 
 
+class QuestionOptionSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = QuestionOptions
+        fields = ('id', 'question', 'order_no', 'em_text', 'ca_text',
+                  'weight')
+
+
 class QuestionSerializer(serializers.ModelSerializer):
-    options = serializers.StringRelatedField(many=True)
+    options = QuestionOptionSerializer(many=True)
     # options = NestedHyperlinkedRelatedField(
     #     many=True,
     #     read_only=True,   # Or add a queryset
@@ -22,14 +29,9 @@ class QuestionSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Questions
-        fields = ('specialization', 'question_type', 'em_text', 'ca_text',
+        fields = ('id', 'specialization', 'question_type', 'em_text',
+                  'ca_text',
                   'weight', 'options')
-
-
-class QuestionOptionSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = QuestionOptions
-        fields = ('question', 'order_no', 'em_text', 'ca_text', 'weight')
 
 
 class SpecializationSerializer(serializers.ModelSerializer):

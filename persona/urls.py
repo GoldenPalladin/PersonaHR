@@ -17,6 +17,7 @@ from django.contrib import admin
 from django.urls import path
 from django.conf.urls import url, include
 from allauth.account.views import confirm_email
+from rest_framework.documentation import include_docs_urls
 from .views import redirect_view
 
 
@@ -25,6 +26,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/', include('answers.urls')),
     url(r'^', include('django.contrib.auth.urls')),
+    path('docs/', include_docs_urls(title='Persona API')),
     url(r'^rest-auth/', include('rest_auth.urls')),
     url(r'^accounts/', include('allauth.urls')),
     url(r'^rest-auth/registration/account-confirm-email/(?P<key>.+)/$', confirm_email, name='account_confirm_email'),
