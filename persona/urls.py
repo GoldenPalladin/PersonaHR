@@ -18,11 +18,12 @@ from django.urls import path
 from django.conf.urls import url, include
 from allauth.account.views import confirm_email
 from rest_framework.documentation import include_docs_urls
-from .views import redirect_view
+from .views import redirect_to_docs, redirect_to_questions
 
 
 urlpatterns = [
-    path('', redirect_view),
+    path('', redirect_to_docs),
+    path('questions/', redirect_to_questions),
     path('admin/', admin.site.urls),
     path('api/', include('answers.urls')),
     url(r'^', include('django.contrib.auth.urls')),
