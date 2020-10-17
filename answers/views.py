@@ -2,14 +2,21 @@ from django_filters.rest_framework import DjangoFilterBackend, OrderingFilter
 
 from rest_framework import viewsets
 
-from .models import Answers, Questions, QuestionOptions, Specialization
+from .models import Answers, Questions, QuestionOptions, Specialization, \
+    UserProfile
 from .serializers import AnswerSerializer, QuestionListSerializer, \
-    QuestionOptionSerializer, SpecializationSerializer, QuestionDetailSerializer
+    QuestionOptionSerializer, SpecializationSerializer, \
+    QuestionDetailSerializer, UserProfileSerializer
 
 
 class AnswersViewSet(viewsets.ModelViewSet):
     queryset = Answers.objects.all()
     serializer_class = AnswerSerializer
+
+
+class UserProfileViewSet(viewsets.ModelViewSet):
+    queryset = UserProfile.objects.all()
+    serializer_class = UserProfileSerializer
 
 
 class QuestionsViewSet(viewsets.ModelViewSet):

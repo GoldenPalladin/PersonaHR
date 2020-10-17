@@ -3,9 +3,10 @@ from django.conf.urls import url
 from rest_framework.schemas import get_schema_view
 from django.urls import include, path
 from rest_framework_nested import routers
-from .views import AnswersViewSet, QuestionsViewSet, QuestionOptionsViewSet, SpecializationViewSet
+from .views import AnswersViewSet, QuestionsViewSet, \
+    QuestionOptionsViewSet, SpecializationViewSet, UserProfileViewSet
 
-app_name = "articles"
+app_name = "answers"
 
 router = DefaultRouter()
 
@@ -14,6 +15,7 @@ schema_view = get_schema_view(title='Persona API',
                                           'candidates.')
 
 router.register(r'answers', AnswersViewSet)
+router.register(r'profiles', UserProfileViewSet)
 router.register(r'questions', QuestionsViewSet, basename='questions')
 router.register(r'specializations', SpecializationViewSet)
 

@@ -11,17 +11,17 @@ class UserProfileSerializer(serializers.ModelSerializer):
 
 
 class AnswerSerializer(serializers.ModelSerializer):
-    user_profile = UserProfileSerializer()
+    userProfile = UserProfileSerializer()
 
     class Meta:
         model = Answers
         fields = ('added', 'user_id',  'specialization',
-                  'answers', 'user_profile')
+                  'answers', 'userProfile')
 
     def create(self, validated_data):
-        user_profile_data = validated_data.pop('user_profile')
+        user_profile_data = validated_data.pop('userProfile')
         profile_id = UserProfile.objects.create(**user_profile_data)
-        Answers.objects.create(user_profile=profile_id, **validated_data)
+        return Answers.objects.create(userProfile=profile_id, **validated_data)
 
 
 class QuestionOptionSerializer(serializers.ModelSerializer):
