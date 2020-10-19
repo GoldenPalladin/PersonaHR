@@ -1,16 +1,13 @@
 from rest_framework.routers import DefaultRouter
 from django.conf.urls import url
-from django.urls import include
-from .views import AnswersViewSet
+from django.urls import include, path
+from .views import UserProfileViewSet
 
-app_name = "answers"
+app_name = 'users'
 
 router = DefaultRouter()
-router.register(r'answers', AnswersViewSet)
+router.register(r'profiles', UserProfileViewSet)
 
 urlpatterns = [
     url(r'^', include(router.urls)),
 ]
-
-
-

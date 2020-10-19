@@ -16,20 +16,31 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 from django.conf.urls import url, include
+from rest_framework.schemas import get_schema_view
 from allauth.account.views import confirm_email
+
 from rest_framework.documentation import include_docs_urls
 from .views import redirect_to_docs, redirect_to_questions
 
+from rest_framework.routers import DefaultRouter
+from specializations.urls import router as spec_router
+
+schema_view = get_schema_view(title='Persona API',
+                              description='An API to match employers and '
+                                          'candidates.')
 
 urlpatterns = [
     path('', redirect_to_docs),
     path('questions/', redirect_to_questions),
     path('admin/', admin.site.urls),
-    path('api/', include('answers.urls')),
+    path('api/answers/', include('answers.urls')),
+    path('api/specializations/', include('specializations.urls')),
+    path('api/users/', include('users.urls')),
     url(r'^', include('django.contrib.auth.urls')),
     path('docs/', include_docs_urls(title='Persona API')),
     url(r'^rest-auth/', include('rest_auth.urls')),
     url(r'^accounts/', include('allauth.urls')),
-    url(r'^rest-auth/registration/account-confirm-email/(?P<key>.+)/$', confirm_email, name='account_confirm_email'),
+    url(r'^rest-auth/registration/account-confirm-email/(?P<key>.+)/$',
+        confirm_email, name='account_confirm_email'),
     url(r'^rest-auth/registration/', include('rest_auth.registration.urls')),
 ]
