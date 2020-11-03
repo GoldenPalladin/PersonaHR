@@ -20,10 +20,7 @@ from rest_framework.schemas import get_schema_view
 from allauth.account.views import confirm_email
 
 from rest_framework.documentation import include_docs_urls
-from .views import redirect_to_docs, redirect_to_questions
-
-from rest_framework.routers import DefaultRouter
-from specializations.urls import router as spec_router
+from .views import redirect_to_docs
 
 schema_view = get_schema_view(title='Persona API',
                               description='An API to match employers and '
@@ -31,7 +28,6 @@ schema_view = get_schema_view(title='Persona API',
 
 urlpatterns = [
     path('', redirect_to_docs),
-    path('questions/', redirect_to_questions),
     path('admin/', admin.site.urls),
     path('api/answers/', include('answers.urls')),
     path('api/specializations/', include('specializations.urls')),
