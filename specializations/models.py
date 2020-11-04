@@ -52,10 +52,10 @@ class Questions(BaseModel):
                                verbose_name=CA_TEXT_NAME,
                                default='')
 
-    weight = models.IntegerField()
+    weight = models.IntegerField(default=1)
 
     def __str__(self):
-        return f'Question {self.id}: {self.textForEmployer}'
+        return f'Question {self.id}: {self.textForEmployer} - {self.textForCandidate}'
 
 
 class QuestionOptions(BaseModel):
@@ -75,7 +75,7 @@ class QuestionOptions(BaseModel):
                                verbose_name=CA_TEXT_NAME,
                                default='')
 
-    weight = models.IntegerField()
+    weight = models.IntegerField(default=1)
 
     def __str__(self):
-        return f'{self.order_no}: {self.em_text} - {self.ca_text} ({self.weight})'
+        return f'{self.order_no}: {self.textForEmployer} - {self.textForCandidate} ({self.weight})'

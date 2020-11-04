@@ -54,6 +54,7 @@ INSTALLED_APPS = [
     'rest_auth',
     'rest_auth.registration',
     'django_filters',
+    'storages',
     'taggit'
 
     # 'drf_yasg',
@@ -172,3 +173,21 @@ REST_FRAMEWORK = {
     'PAGE_SIZE': 10,
     'DEFAULT_SCHEMA_CLASS': 'rest_framework.schemas.coreapi.AutoSchema',
 }
+
+# https://www.caktusgroup.com/blog/2014/11/10/Using-Amazon-S3-to-store-your-Django-sites-static-and-media-files/
+AWS_S3_OBJECT_PARAMETERS = {
+    'Expires': 'Thu, 31 Dec 2099 20:00:00 GMT',
+    'CacheControl': 'max-age=94608000',
+}
+
+AWS_STORAGE_BUCKET_NAME = 'personabackendstaticfiles'
+AWS_S3_REGION_NAME = 'us-west-2'  # e.g. us-east-2
+AWS_ACCESS_KEY_ID = 'AKIAR4JNZWSOPDT3CE32'
+AWS_SECRET_ACCESS_KEY = 'xusuhitAD/lmfG6bS/JTWoI3gVIK3wLrmC8+6Hrz'
+
+# Tell django-storages the domain to use to refer to static files.
+AWS_S3_CUSTOM_DOMAIN = '%s.s3.amazonaws.com' % AWS_STORAGE_BUCKET_NAME
+
+# Tell the staticfiles app to use S3Boto3 storage when writing the collected static files (when
+# you run `collectstatic`).
+STATICFILES_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
