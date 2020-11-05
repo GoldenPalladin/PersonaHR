@@ -24,7 +24,9 @@ class Answers(BaseModel):
                                      null=True,
                                      blank=True)
 
-    answer_data = models.JSONField(name='answerData')
+    answer_data = models.JSONField(name='answerData',
+                                   null=True,
+                                   blank=True)
 
     specialization = models.ForeignKey(Specialization,
                                        on_delete=models.CASCADE,
@@ -32,11 +34,10 @@ class Answers(BaseModel):
                                        verbose_name=SPECIALIZATION)
 
     added = models.DateTimeField(auto_now_add=True)
-    tags = TaggableManager()
+    # tags = TaggableManager(required=False)
 
     def __str__(self):
-        return f'{self.added} - User: {self.user.username}, ' \
-            f'type: {self.user_type}'
+        return f'{self.added} - User: {self.user.username}'
 
 
 class ParsedAnswers(models.Model):

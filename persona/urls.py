@@ -32,6 +32,7 @@ urlpatterns = [
     path('api/answers/', include('answers.urls')),
     path('api/specializations/', include('specializations.urls')),
     path('api/users/', include('users.urls')),
+    path('api/skills/', include('Skills.urls')),
     url(r'^', include('django.contrib.auth.urls')),
     path('docs/', include_docs_urls(title='Persona API')),
     url(r'^rest-auth/', include('rest_auth.urls')),

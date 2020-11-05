@@ -46,6 +46,7 @@ INSTALLED_APPS = [
     'allauth',
     'allauth.account',
     'specializations',
+    'Skills',
     'answers',
     'Jobs',
     'users',
