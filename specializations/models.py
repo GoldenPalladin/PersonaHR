@@ -35,7 +35,7 @@ class Questions(BaseModel):
                             (TEXT, 'Text')]
     specialization = models.ForeignKey(Specialization,
                                        on_delete=models.CASCADE,
-                                       related_name='+',
+                                       related_name='specialization',
                                        verbose_name=SPECIALIZATION)
 
     question_type = models.CharField(max_length=15,
