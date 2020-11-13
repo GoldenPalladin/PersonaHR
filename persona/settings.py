@@ -49,6 +49,7 @@ INSTALLED_APPS = [
     'Skills',
     'answers',
     'Jobs',
+    'match',
     'users',
     'rest_framework',
     'rest_framework.authtoken',
