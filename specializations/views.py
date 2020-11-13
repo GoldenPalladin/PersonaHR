@@ -1,8 +1,6 @@
 from django_filters.rest_framework import DjangoFilterBackend
-from django.utils.decorators import method_decorator
-from rest_framework import viewsets
 from drf_yasg.openapi import Parameter, IN_QUERY, TYPE_STRING, TYPE_INTEGER
-from drf_yasg.utils import swagger_auto_schema
+from lib.swagged_view import SwaggedViewSet, add_swagger
 
 from .serializers import Questions, QuestionOptions, \
     QuestionDetailSerializer, QuestionListSerializer, \
@@ -18,97 +16,49 @@ param_question_type = Parameter('type',
                                 description='Return the questions of '
                                             'specified type',
                                 type=TYPE_STRING)
+param_name = Parameter('name',
+                       in_=IN_QUERY,
+                       description='Specialization name for '
+                                   '\'contains\' search',
+                       type=TYPE_STRING)
 
 
-@method_decorator(name='list',
-                  decorator=swagger_auto_schema(
-                      manual_parameters=[param_specialization,
-                                         param_question_type],
-                      operation_id='Get list of questions',
-                      operation_description='Get list of questions with filter '
-                                            'options',
-                      tags=['Questions']
-                  ))
-@method_decorator(name='retrieve',
-                  decorator=swagger_auto_schema(
-                      operation_id='Get question details',
-                      operation_description='Get question by id',
-                      tags=['Questions']
-                  ))
-@method_decorator(name='create',
-                  decorator=swagger_auto_schema(
-                      operation_id='Create new question',
-                      operation_description='Create new question with options',
-                      tags=['Questions']
-                  ))
-@method_decorator(name='update',
-                  decorator=swagger_auto_schema(
-                      operation_id='Update question',
-                      operation_description='Update question with specified id',
-                      tags=['Questions']
-                  ))
-class QuestionsViewSet(viewsets.ModelViewSet):
+question_swagger_details = [
+    ('list', 'Get list of question', 'Get list of questions with filter '
+                                    'options',
+     ['Questions'], [param_specialization,
+                     param_question_type]),
+    ('retrieve', 'Get question details', 'Get question by id',
+     ['Questions'], []),
+    ('create', 'Create new question', 'Create new question with options',
+     ['Questions'], []),
+    ('update', 'Update question', 'Update question with specified id',
+     ['Questions'], [])
+]
+@add_swagger(question_swagger_details)
+class QuestionsViewSet(SwaggedViewSet):
     queryset = Questions.objects.all()
     serializer_class = QuestionListSerializer
     detail_serializer_class = QuestionDetailSerializer
     filter_backends = [DjangoFilterBackend, ]
     filterset_fields = ['specialization']
-    http_method_names = ['get', 'post', 'put', 'head']
-
-    def get_serializer_class(self):
-        """
-        Determine which serializer to user `list` or `detail`
-        """
-        if self.action == 'retrieve':
-            if hasattr(self, 'detail_serializer_class'):
-                return self.detail_serializer_class
-
-        return super().get_serializer_class()
-
-    def update(self, request, *args, **kwargs):
-        kwargs.update({'partial': True})
-        return super().update(request, *args, **kwargs)
-
-    def get_queryset(self):
-        queryset = Questions.objects.all()
-        specialization = self.request.query_params.get('specializationId', None)
-        question_type = self.request.query_params.get('type', None)
-        if specialization is not None:
-            queryset = queryset.filter(specialization=specialization)
-        if question_type is not None:
-            queryset = queryset.filter(questionType=question_type)
-        return queryset
+    params = ['specializationId', 'type']
 
 
-@method_decorator(name='list',
-                  decorator=swagger_auto_schema(
-                      manual_parameters=[param_specialization,
-                                         param_question_type],
-                      operation_id='Get question options',
-                      operation_description='Get list of options for the '
-                                            'question',
-                      tags=['Questions']
-                  ))
-@method_decorator(name='retrieve',
-                  decorator=swagger_auto_schema(
-                      operation_id='Get option',
-                      operation_description='Get option by id',
-                      tags=['Questions']
-                  ))
-@method_decorator(name='create',
-                  decorator=swagger_auto_schema(
-                      operation_id='Create new option',
-                      operation_description='Create new option for the '
-                                            'question',
-                      tags=['Questions']
-                  ))
-@method_decorator(name='update',
-                  decorator=swagger_auto_schema(
-                      operation_id='Update option',
-                      operation_description='Update option details',
-                      tags=['Questions']
-                  ))
-class QuestionOptionsViewSet(viewsets.ModelViewSet):
+options_swagger_details = [
+    ('list', 'Get question options', 'Get list of options for the question',
+     ['Questions'], [param_specialization,
+                     param_question_type]),
+    ('retrieve', 'Get option details', 'Get option by id',
+     ['Questions'], []),
+    ('create', 'Create new option', 'Create new option for the question',
+     ['Questions'], []),
+    ('update', 'Update option', 'Update option details',
+     ['Questions'], [])
+]
+@add_swagger(options_swagger_details)
+class QuestionOptionsViewSet(SwaggedViewSet):
+
     serializer_class = QuestionOptionSerializer
     http_method_names = ['get', 'post', 'put', 'head']
 
@@ -117,49 +67,19 @@ class QuestionOptionsViewSet(viewsets.ModelViewSet):
             'question_pk'])
 
 
-param_name = Parameter('name',
-                       in_=IN_QUERY,
-                       description='Specialization name for '
-                                   '\'contains\' search',
-                       type=TYPE_STRING)
-
-
-@method_decorator(name='list',
-                  decorator=swagger_auto_schema(
-                      manual_parameters=[param_name],
-                      operation_id='Get list of specializations',
-                      operation_description='Get list of specializations '
-                                            'with filter options',
-                      tags=['Specializations']
-                  ))
-@method_decorator(name='retrieve',
-                  decorator=swagger_auto_schema(
-                      operation_id='Get specialization details',
-                      operation_description='Get specialization by id',
-                      tags=['Specializations']
-                  ))
-@method_decorator(name='create',
-                  decorator=swagger_auto_schema(
-                      operation_id='Create new specialization',
-                      operation_description='Create new specialization',
-                      tags=['Specializations']
-                  ))
-@method_decorator(name='update',
-                  decorator=swagger_auto_schema(
-                      operation_id='Update specialization',
-                      operation_description='Update specialization with '
-                                            'specified id',
-                      tags=['Specializations']
-                  ))
-class SpecializationViewSet(viewsets.ModelViewSet):
+specialization_swagger_details = [
+    ('list', 'Get specializations', 'Get list specializations',
+     ['Questions'], [param_name, ]),
+    ('retrieve', 'Get specialization details', 'Get specialization by id',
+     ['Questions'], []),
+    ('create', 'Create new specialization', 'Create new specialization',
+     ['Questions'], []),
+    ('update', 'Update specialization', 'Update specialization details',
+     ['Questions'], [])
+]
+@add_swagger(specialization_swagger_details)
+class SpecializationViewSet(SwaggedViewSet):
     queryset = Specialization.objects.all()
     serializer_class = SpecializationSerializer
-    http_method_names = ['get', 'post']
+    params = ['name', ]
 
-    def get_queryset(self):
-        queryset = Specialization.objects.all()
-        name = self.request.query_params.get('name', None)
-        if name is not None:
-            queryset = queryset.filter(name__contains=name)
-
-        return queryset
