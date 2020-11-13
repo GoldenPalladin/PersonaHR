@@ -1,13 +1,101 @@
+from __future__ import annotations
+#https://stackoverflow.com/questions/33533148/how-do-i-type-hint-a-method-with-the-type-of-the-enclosing-class
+from enum import Enum
+from decimal import Decimal, getcontext
+from typing import Union, List, Tuple
 
-# A custom error to raise through matching if required
+from users.models import UserProfile
+
+getcontext().prec = 2
+
+MATCHING_POW = 2
+
+DecimalInput = Union[float, int, str]
+# type that can be converted into Decimal
+
+
 class MatchError(Exception):
+    """
+    A custom error to raise through matching if required
+    """
     pass
 
-# Contants to define types of questions
-Q_YN = 10               # A yes-no question ("0" stands for "no", "1" stands for "yes")
-Q_GT = 20               # A multiple choice one with every next option is better that the previous one, 
-                      # e.g. "How good a you in C#"? (1-"never heard", 2-"a beginner", ... 5-"a C++ guru")
-Q_EQ = 30           # Not used yet...
+
+# using classes is more convenient.
+# And docstring is obligatory
+class QuestionType(Enum):
+    """
+    Available question types:
+    - A yes-no question of boolean type
+    -  A multiple choice one with every next option is better that the
+    previous one, e.g. "How good a you in C#"?
+    (1-"never heard", 2-"a beginner", ... 5-"a C++ guru")
+    """
+    yes_no = 10
+    gradation = 20
+
+
+class UserType(Enum):
+    candidate = UserProfile.CANDIDATE
+    employer = UserProfile.EMPLOYER
+
+
+class Answer:
+    def __init__(self,
+                 q_id: int,
+                 u_type: UserType,
+                 q_type: QuestionType,
+                 value: DecimalInput,
+                 weight: DecimalInput = 1):
+        """
+        Class to handle single answer data.
+        To avoid float rounding errors value and weight are stored as decimals
+        :param q_id: question id in Database
+        :param q_type: question type
+        :param value: answer value
+        :param weight: answer weight
+        :param u_type: user type
+        """
+        self.q_type = q_type
+        self.q_id = q_id
+        self.value = Decimal(value)
+        self.weight = Decimal(weight)
+        self.u_type = u_type
+
+    def __sub__(self, other) -> Decimal:
+        """
+        redefine substraction as distance metric between answers
+        :param other: answer of the other user type
+        :return: decimal distance
+        """
+        if not isinstance(other, Answer):
+            raise TypeError(f'{other} must be of {type(self)} type')
+        if other.u_type == self.u_type:
+            raise MatchError(f'{self} and {other} should have different '
+                             f'user types, now they all are {self.u_type}')
+        if self.q_type != other.q_type:
+            raise MatchError(f'{self} and {other} should have the same '
+                             f'question type')
+        # here distancing begins
+        # note that self.weight is always used since self is the desired
+        # answers of the person who looks through other answers to find the
+        # best match so self.weight defines the importance of the answer
+        if self.q_id == other.q_id:
+            return (other.value - self.value) * self.weight
+        else:
+            return Decimal(0)
+
+    def rank_answers(self, answers: List[Answer]) -> List[Tuple[Answer, Decimal]]:
+        """
+        method to get list of answers,
+        :param answers:
+        :return:
+        """
+        result = [(answer, self - answer) for answer in answers]
+        return result.sort(key=lambda tup: tup[1])
+
+
+# -----------------------------
 
 _questions = [         
     { 'id': 0, 'type': Q_YN, 'value': 1, 'weight': 0.75 },
@@ -37,11 +125,13 @@ def match_pair(q, a):
     else:
         weight = q['weight']
 
+    # weight = q.get('weight', 1) is much simpler
+
     if q['type'] == Q_YN:                       # A "yes-no" question
         return (q['value'] - a) * weight
     if q['type'] == Q_GT:                       # A "greater than" one
         diff = q['value'] - a
-        if not (diff > 0):
+        if not (diff > 0): # the < operation hasn't yet been invented, huh?
             return 0
         return diff * weight
     if q['type'] == Q_EQ:                       # An "equal to" one
