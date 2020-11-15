@@ -24,7 +24,7 @@ class Answers(BaseModel):
                                      null=True,
                                      blank=True)
 
-    answer_data = models.JSONField(name='answerData',
+    answer_data = models.TextField(name='answerData',
                                    null=True,
                                    blank=True)
 
