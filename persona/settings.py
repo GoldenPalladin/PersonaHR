@@ -176,8 +176,8 @@ AWS_S3_OBJECT_PARAMETERS = {
 
 AWS_STORAGE_BUCKET_NAME = 'personabackendstaticfiles'
 AWS_S3_REGION_NAME = 'us-west-2'  # e.g. us-east-2
-AWS_ACCESS_KEY_ID = 'AKIAR4JNZWSOPDT3CE32'
-AWS_SECRET_ACCESS_KEY = 'xusuhitAD/lmfG6bS/JTWoI3gVIK3wLrmC8+6Hrz'
+AWS_ACCESS_KEY_ID = 'AKIAR4JNZWSOBLVZJLGB'
+AWS_SECRET_ACCESS_KEY = 'J9BB0GyMvE++2LM8dpiVHdDBMaZ+oQnSYaxR2bKX'
 
 # Tell django-storages the domain to use to refer to static files.
 # https://www.caktusgroup.com/blog/2014/11/10/Using-Amazon-S3-to-store-your-Django-sites-static-and-media-files/
