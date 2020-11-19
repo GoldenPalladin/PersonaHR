@@ -24,7 +24,8 @@ class UserProfile(BaseModel):
 
     lead_source = models.URLField(name='leadSource',
                                   verbose_name=LEAD_SOURCE,
-                                  default=DEFAULT_LEAD_SOURCE)
+                                  default=DEFAULT_LEAD_SOURCE,
+                                  blank=True)
 
     user_type = models.CharField(max_length=9,
                                  name='userType',
@@ -46,3 +47,8 @@ class UserProfile(BaseModel):
     b_user_u_name = models.CharField(max_length=20, blank=True,
                                      name='userUserName',
                                      verbose_name=T_USER_U_NAME)
+
+    user = models.ForeignKey(User,
+                             on_delete=models.CASCADE,
+                             blank=True,
+                             null=True)

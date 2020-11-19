@@ -25,24 +25,10 @@ class Specialization(BaseModel):
 
 class Questions(BaseModel):
     """class to store questions (grouping item for options)"""
-    RADIO = 'SingleChoice'
-    CHECK = 'MultipleChoice'
-    NUMBER = 'Number'
-    TEXT = 'FreeText'
-    QUESTION_TYPE_CHOICE = [(RADIO, 'Single choice'),
-                            (CHECK, 'Multiple choice'),
-                            (NUMBER, 'Number'),
-                            (TEXT, 'Text')]
     specialization = models.ForeignKey(Specialization,
                                        on_delete=models.CASCADE,
                                        related_name='specialization',
                                        verbose_name=SPECIALIZATION)
-
-    question_type = models.CharField(max_length=15,
-                                     name='questionType',
-                                     choices=QUESTION_TYPE_CHOICE,
-                                     default=RADIO,
-                                     verbose_name=QUESTION_TYPE)
 
     em_text = models.TextField(name='textForEmployer',
                                verbose_name=EM_TEXT_NAME,
@@ -51,8 +37,6 @@ class Questions(BaseModel):
     ca_text = models.TextField(name='textForCandidate',
                                verbose_name=CA_TEXT_NAME,
                                default='')
-
-    weight = models.IntegerField(default=1)
 
     def __str__(self):
         return f'Question {self.id}: {self.textForEmployer} - {self.textForCandidate}'
@@ -75,7 +59,30 @@ class QuestionOptions(BaseModel):
                                verbose_name=CA_TEXT_NAME,
                                default='')
 
-    weight = models.IntegerField(default=1)
-
     def __str__(self):
         return f'{self.order_no}: {self.textForEmployer} - {self.textForCandidate} ({self.weight})'
+
+
+SKILL_NAME = 'Skill'
+SKILL_GROUP = 'Group'
+
+
+class SkillGroup(BaseModel):
+    name = models.CharField(max_length=100,
+                            name='skillGroup',
+                            verbose_name=SKILL_GROUP)
+    def __str__(self):
+        return f'{self.skillGroup}'
+
+
+class Skill(BaseModel):
+    group = models.ForeignKey(SkillGroup,
+                              on_delete=models.CASCADE,
+                              related_name='group',
+                              verbose_name=SKILL_GROUP)
+    name = models.CharField(max_length=100,
+                            name='skillName',
+                            verbose_name=SKILL_NAME)
+
+    def __str__(self):
+        return f'{self.skillName}'

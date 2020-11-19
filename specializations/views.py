@@ -1,6 +1,12 @@
+from django.utils.decorators import method_decorator
 from django_filters.rest_framework import DjangoFilterBackend
 from drf_yasg.openapi import Parameter, IN_QUERY, TYPE_STRING, TYPE_INTEGER
+from drf_yasg.utils import swagger_auto_schema
+from rest_framework import viewsets
+
 from lib.swagged_view import SwaggedViewSet, add_swagger
+from specializations.models import SkillGroup, Skill
+from specializations.serializers import SkillGroupSerialiser, SkillSerialiser
 
 from .serializers import Questions, QuestionOptions, \
     QuestionDetailSerializer, QuestionListSerializer, \
@@ -83,3 +89,77 @@ class SpecializationViewSet(SwaggedViewSet):
     serializer_class = SpecializationSerializer
     params = ['name', ]
 
+
+@method_decorator(name='list',
+                  decorator=swagger_auto_schema(
+                      operation_id='Get groups list',
+                      operation_description='Get list of skill groups',
+                      tags=['Skills']
+                  ))
+@method_decorator(name='retrieve',
+                  decorator=swagger_auto_schema(
+                      operation_id='Get group details',
+                      operation_description='Get skill group by id',
+                      tags=['Skills']
+                  ))
+@method_decorator(name='create',
+                  decorator=swagger_auto_schema(
+                      operation_id='Create new group',
+                      operation_description='Create new skill group',
+                      tags=['Skills']
+                  ))
+@method_decorator(name='update',
+                  decorator=swagger_auto_schema(
+                      operation_id='Update group',
+                      operation_description='Update skill group details',
+                      tags=['Skills']
+                  ))
+class SkillGroupViewSet(viewsets.ModelViewSet):
+    queryset = SkillGroup.objects.all()
+    serializer_class = SkillGroupSerialiser
+    http_method_names = ['get', 'post', 'put', 'head']
+
+
+param_skill_group = Parameter('skillGroup',
+                              in_=IN_QUERY,
+                              description='Group id to filter the skills',
+                              type=TYPE_INTEGER)
+
+
+@method_decorator(name='list',
+                  decorator=swagger_auto_schema(
+                      manual_parameters=[param_skill_group, ],
+                      operation_id='Get skills list',
+                      operation_description='Get list of skills with filter '
+                                            'options',
+                      tags=['Skills']
+                  ))
+@method_decorator(name='retrieve',
+                  decorator=swagger_auto_schema(
+                      operation_id='Get skill details',
+                      operation_description='Get skill by id',
+                      tags=['Skills']
+                  ))
+@method_decorator(name='create',
+                  decorator=swagger_auto_schema(
+                      operation_id='Create new skill',
+                      operation_description='Create new skill',
+                      tags=['Skills']
+                  ))
+@method_decorator(name='update',
+                  decorator=swagger_auto_schema(
+                      operation_id='Update skill',
+                      operation_description='Update skill details',
+                      tags=['Skills']
+                  ))
+class SkillViewSet(viewsets.ModelViewSet):
+    queryset = Skill.objects.all()
+    serializer_class = SkillSerialiser
+    http_method_names = ['get', 'post', 'put', 'head']
+
+    def get_queryset(self):
+        queryset = Skill.objects.all()
+        skill_group = self.request.query_params.get('skillGroup', None)
+        if skill_group is not None:
+            queryset = queryset.filter(skillGroup=skill_group)
+        return queryset

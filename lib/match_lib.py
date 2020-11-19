@@ -23,9 +23,7 @@ taken as importance parameter. The more the weight the less the distance
 3. Question of single choice makes one "selected option" answer with weight, 
 value. Distance is measured between "my" and "other" selected options.
 Values of choices makes the [0...1] grade.
-4. Question of multiple choice makes multiple "selected option" answers, 
-each having weight and  possible values of [0, 1]. Distance is measured 
-for each selected option.
+
 5. Total distance -- sum of distances makes the total distance
 6. Distance threshold -- for every question and skill distance is 
 calculated and added. If at the N-th answer the distance threshold for 
@@ -38,24 +36,7 @@ DecimalInput = Union[float, int, str]
 
 
 class MatchError(Exception):
-    """
-    A custom error to raise through matching if required
-    """
     pass
-
-
-# using classes is more convenient.
-# And docstring is obligatory
-class QuestionType(Enum):
-    """
-    Available question types:
-    - A yes-no question of boolean type
-    -  A single choice one with every next option is better that the
-    previous one, e.g. "How good a you in C#"?
-    (1-"never heard", 2-"a beginner", ... 5-"a C++ guru")
-    """
-    yes_no = Questions.CHECK
-    gradation = Questions.RADIO
 
 
 class UserType(Enum):
@@ -68,28 +49,13 @@ class QuestionOption:
     """
     class to handle question options
     :param o_id: question option id
-    :param value: option value
     :param weight: option answer weight
     """
     o_id: int
-    value: DecimalInput
     weight: int
 
     def __post_init__(self):
         self.value = Decimal(self.value)
-
-    def __sub__(self, other) -> Decimal:
-        """
-        redefine substraction as distance metric between answered options
-        :param other:
-        :return:
-        """
-        if not isinstance(other, QuestionOption):
-            raise TypeError(f'{other} must be of {type(self)} type')
-        # note that self.weight is always used since self is the desired
-        # answers of the person who looks through other answers to find the
-        # best match so self.weight defines the importance of the answer
-        return Decimal(abs((other.value - self.value) * self.weight))
 
     def distance_to_options(self, options: List[QuestionOption]) -> Decimal:
         """
@@ -109,17 +75,12 @@ class Answer:
     Class to handle answer data for one Question (single or multiple choice).
     To avoid float rounding errors value and weight are stored as decimals
     :param q_id: question id in Database
-    :param q_type: question type
     :param u_type: user type
     :param selected_options: list of selected question options
     """
     q_id: int
     u_type: UserType
-    q_type: QuestionType
-    weight: int
     selected_options: List[QuestionOption]
-
-# TODO: weight for SingleChoice, weights for MultipleChoice options
 
     def __sub__(self, other) -> Decimal:
         """
@@ -135,12 +96,8 @@ class Answer:
         if self.q_id != other.q_id:
             raise MatchError(f'{self} and {other} should be the answers for '
                              f'the  same question')
-
-        if self.q_type == QuestionType.gradation:
-            return self.selected_options[0] - other.selected_options[0]
-        elif self.q_type == QuestionType.yes_no:
-            sum([option.distance_to_options(other.selected_options) for
-                 option in self.selected_options])
+        sum([option.distance_to_options(other.selected_options) for
+             option in self.selected_options])
 
     def distance_to_answers(self, others: Answers) -> Decimal:
         """

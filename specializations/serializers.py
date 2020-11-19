@@ -1,12 +1,14 @@
 from rest_framework import serializers
+from rest_framework.serializers import ModelSerializer
+
+from specializations.models import SkillGroup, Skill
 from .models import Questions, QuestionOptions, Specialization
 
 
 class QuestionOptionSerializer(serializers.ModelSerializer):
     class Meta:
         model = QuestionOptions
-        fields = ('id', 'question', 'order_no', 'textForEmployer',
-                  'textForCandidate', 'weight')
+        fields = '__all__'
 
     def __init__(self, *args, **kwargs):
         """
@@ -27,8 +29,8 @@ class QuestionListSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Questions
-        fields = ('id', 'specialization', 'questionType', 'textForEmployer',
-                  'textForCandidate', 'weight', 'options')
+        fields = ('id', 'specialization', 'textForEmployer',
+                  'textForCandidate', 'options')
 
     def create(self, validated_data):
         options_data = validated_data.pop('options', None)
@@ -44,8 +46,8 @@ class QuestionDetailSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Questions
-        fields = ('id', 'specialization', 'questionType', 'textForEmployer',
-                  'textForCandidate', 'weight', 'options')
+        fields = ('id', 'specialization', 'textForEmployer',
+                  'textForCandidate', 'options')
 
     def update(self, instance, validated_data):
         instance.question_type = validated_data.get('questionType',
@@ -54,8 +56,6 @@ class QuestionDetailSerializer(serializers.ModelSerializer):
                                               instance.em_text)
         instance.ca_text = validated_data.get('textForCandidate',
                                               instance.ca_text)
-        instance.weight = validated_data.get('weight',
-                                             instance.weight)
         instance.save()
 
 
@@ -63,3 +63,17 @@ class SpecializationSerializer(serializers.ModelSerializer):
     class Meta:
         model = Specialization
         fields = ('name',)
+
+
+class SkillGroupSerialiser(ModelSerializer):
+    class Meta:
+        model = SkillGroup
+        fields = '__all__'
+
+
+class SkillSerialiser(ModelSerializer):
+    group = SkillGroupSerialiser(many=False, required=False)
+
+    class Meta:
+        model = Skill
+        fields = '__all__'

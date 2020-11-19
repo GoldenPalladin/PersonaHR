@@ -1,58 +1,70 @@
 from django.db import models
-from taggit.managers import TaggableManager
 
 from specializations.models import BaseModel, Specialization, \
-    SPECIALIZATION, QuestionOptions
+    SPECIALIZATION, QuestionOptions, Skill, SKILL_NAME
 from users.models import UserProfile, User
+from Jobs.models import CV, Job
 
 
-class Answers(BaseModel):
+class Respondent(BaseModel):
     """
     Class to store response data both from candidates and employers
     """
 
-    user = models.ForeignKey(User,
-                             on_delete=models.CASCADE,
-                             related_name='+',
-                             null=True,
-                             blank=True)
+    cv = models.ForeignKey(CV,
+                           on_delete=models.CASCADE,
+                           blank=True)
 
-    user_profile = models.ForeignKey(UserProfile,
-                                     name='userProfile',
-                                     on_delete=models.SET_NULL,
-                                     related_name='user_profile',
-                                     null=True,
-                                     blank=True)
-
-    answer_data = models.TextField(name='answerData',
-                                   null=True,
-                                   blank=True)
-
-    specialization = models.ForeignKey(Specialization,
-                                       on_delete=models.CASCADE,
-                                       related_name='+',
-                                       verbose_name=SPECIALIZATION)
+    # answer_data = models.TextField(name='answerData',
+    #                                null=True,
+    #                                blank=True)
 
     added = models.DateTimeField(auto_now_add=True)
-    # tags = TaggableManager(required=False)
 
     def __str__(self):
         return f'{self.added} - User: {self.user.username}'
 
 
-class ParsedAnswers(models.Model):
+class Selected(BaseModel):
     """
-    class to store answers after
+    base class to store items selected by respondent
     """
-    answer_id = models.ForeignKey(Answers,
-                                  on_delete=models.CASCADE,
-                                  related_name='answers',
-                                  name='answerId')
+    respondent = models.ForeignKey(Respondent,
+                                   on_delete=models.CASCADE,
+                                   related_name='respondent',
+                                   name='respondentId')
+
+    selection_weight = models.IntegerField(name='selectionWeight')
+
+
+class SelectedOptions(Selected):
+    """
+    class to handle selected options
+    """
     selected_option_id = models.ForeignKey(QuestionOptions,
                                            on_delete=models.SET_NULL,
                                            name='selectedOptionId',
                                            null=True)
-    answered_option_weight = models.IntegerField(name='answeredOptionWeight')
 
 
+SKILL_LEVEL = 'What is your level in this skill?'
+SKILL_LEVEL_CHOICES = [(1, 'Do not have this skill'),
+                       (2, 'Actively learning'),
+                       (3, 'Using from time to time'),
+                       (4, 'Using every day'),
+                       (5, 'Expert')]
 
+
+class Response(Selected):
+    """
+    class to handle answered skill-level
+    """
+    skill = models.ForeignKey(Skill,
+                              on_delete=models.CASCADE,
+                              related_name='skill',
+                              verbose_name=SKILL_NAME)
+
+    skill_level = models.IntegerField(name='skillLevel',
+                                      choices=SKILL_LEVEL_CHOICES,
+                                      default=1,
+                                      verbose_name=SKILL_LEVEL)
