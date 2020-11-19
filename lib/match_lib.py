@@ -82,6 +82,8 @@ class Answer:
     u_type: UserType
     selected_options: List[QuestionOption]
 
+# TODO: weight for SingleChoice, weights for MultipleChoice options
+
     def __sub__(self, other) -> Decimal:
         """
         redefine substraction as distance metric between answers
