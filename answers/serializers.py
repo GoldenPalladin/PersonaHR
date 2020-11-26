@@ -8,13 +8,12 @@ from .models import Respondent
 from users.serializers import UserProfileSerializer, UserProfile
 
 
-class AnswerSerializer(serializers.ModelSerializer):
+class RespondentSerializer(serializers.ModelSerializer):
     userProfile = UserProfileSerializer()
 
     class Meta:
         model = Respondent
-        fields = ('added', 'user_id',  'specialization',
-                  'answers', 'userProfile')
+        fields = '__all__'
 
     def create(self, validated_data):
         user_profile_data = validated_data.pop('userProfile')

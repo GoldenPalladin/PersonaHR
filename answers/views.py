@@ -8,12 +8,12 @@ from answers.models import Response
 from answers.serializers import SkillResponsesSerialiser
 
 from .models import Respondent
-from .serializers import AnswerSerializer
+from .serializers import RespondentSerializer
 
 
-class AnswersViewSet(viewsets.ModelViewSet):
+class RespondentViewSet(viewsets.ModelViewSet):
     queryset = Respondent.objects.all()
-    serializer_class = AnswerSerializer
+    serializer_class = RespondentSerializer
 
 
 param_skill = Parameter('skillId',
